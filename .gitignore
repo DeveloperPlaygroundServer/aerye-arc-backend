@@ -1,0 +1,9 @@
+/target
+/debug
+.DS_Store
+.AppleDouble
+.LSOverride
+*.pdb
+.vscode/*
+.venv
+.env
