@@ -24,6 +24,7 @@ impl PasteId<'_> {
 
     /// Returns the path to the paste in `upload/` corresponding to this ID.
     pub fn file_path(&self) -> PathBuf {
+        // not sure if git can track empty dir but 
         let root = concat!(env!("CARGO_MANIFEST_DIR"), "/", "upload");
         Path::new(root).join(self.0.as_ref())
     }
