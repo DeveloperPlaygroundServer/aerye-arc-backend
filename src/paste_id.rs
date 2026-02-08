@@ -1,6 +1,7 @@
 use rand::prelude::*;
 use std::borrow::Cow;
 use std::path::{Path, PathBuf};
+use std::fmt;
 
 #[derive(UriDisplayPath)]
 pub struct PasteId<'a>(Cow<'a, str>);
@@ -24,8 +25,13 @@ impl PasteId<'_> {
 
     /// Returns the path to the paste in `upload/` corresponding to this ID.
     pub fn file_path(&self) -> PathBuf {
-        // not sure if git can track empty dir but 
         let root = concat!(env!("CARGO_MANIFEST_DIR"), "/", "upload");
         Path::new(root).join(self.0.as_ref())
+    }
+}
+
+impl fmt::Display for PasteId<'_>{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result{
+        write!(f, "{}", self.0)
     }
 }

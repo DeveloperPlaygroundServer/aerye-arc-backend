@@ -15,7 +15,12 @@ const HOST: Absolute<'static> = uri!("http://localhost:5432");
 async fn upload(paste: Data<'_>) -> std::io::Result<String> {
     let id = paste_id::PasteId::new(ID_LENGTH);
     match paste.open(128.kibibytes()).into_file(id.file_path()).await {
-        Ok(_) => Ok(format!("Success")),
+        Ok(_) => {
+            // Not typesafe I don't think
+            // also will have to change once we use a config file
+            let uri = format!("{}/{}", HOST, id);
+            Ok(uri)
+        },
         Err(e) => Ok(format!("Error: {}", e)),
     }
 }
