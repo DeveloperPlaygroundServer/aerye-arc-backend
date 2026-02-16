@@ -1,5 +1,7 @@
+use json::JsonValue;
 use rocket::data::{Data, ToByteUnit};
 use rocket::http::uri::Absolute;
+//use rocket_contrib::json::Json;
 #[macro_use]
 extern crate rocket;
 mod paste_id;
@@ -10,18 +12,26 @@ mod paste_id;
 const ID_LENGTH: usize = 5;
 const HOST: Absolute<'static> = uri!("http://localhost:5432");
 
-// Eventually we will want to return actual json.
+// If filesize is too large, you might get a broken pipe error
+
 #[post("/", data = "<paste>")]
 async fn upload(paste: Data<'_>) -> std::io::Result<String> {
     let id = paste_id::PasteId::new(ID_LENGTH);
-    match paste.open(128.kibibytes()).into_file(id.file_path()).await {
+    match paste.open(40.megabytes()).into_file(id.file_path()).await {
         Ok(_) => {
-            // Not typesafe I don't think
+            // Not typesafe I don't think. should use uri! macro
             // also will have to change once we use a config file
             let uri = format!("{}/{}", HOST, id);
-            Ok(uri)
-        },
-        Err(e) => Ok(format!("Error: {}", e)),
+            let mut response = JsonValue::new_object();
+            response["uri"] = uri.into();
+            Ok(json::stringify(response))
+        }
+        Err(e) => {
+            let mut response = JsonValue::new_object();
+            response["error"] = "Error. Check server terminal.".into();
+            println!("Error: {:?}",e);
+            Ok(json::stringify(response))
+        }
     }
 }
 
