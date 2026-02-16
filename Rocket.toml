@@ -10,6 +10,7 @@ log_level = "normal"
 temp_dir = "/tmp"
 cli_colors = false
 # We only need secret_key for private cookies
+# also do not put the actual secret key in here.
 #secret_key = "hPrYyЭRiMyµ5sBB1π+CMæ1køFsåqKvBiQJxBVHQk="
 
 [default.limits]
